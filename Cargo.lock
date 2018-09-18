@@ -1,0 +1,4 @@
+[[package]]
+name = "rocket-jwt-auth"
+version = "0.1.0"
+

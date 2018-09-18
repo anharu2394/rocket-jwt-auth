@@ -1,0 +1,8 @@
+[package]
+name = "rocket-jwt-auth"
+version = "0.1.0"
+authors = ["安藤春香 <haruan2394@gmail.com>"]
+
+[dependencies]
+rocket = "0.3.16"
+rocket_codegen = "0.3.16"
