@@ -24,6 +24,12 @@ fn create(user: Json<NewUser>, conn: db::Connection) -> Json<User> {
     let insert = NewUser { ..user.into_inner() };
     Json(NewUser::create(insert, &conn))
 }
+
+#[get("/login")]
+fn login(conn: db::Connection) {
+
+}
+
 #[get("/users")]
 fn get_users(conn: db::Connection) -> Json<Vec<User>> {
     Json(User::read(&conn))
