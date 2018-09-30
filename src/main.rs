@@ -20,13 +20,13 @@ fn index() -> &'static str {
 }
 
 #[post("/", data = "<user>")]
-fn create(user: Json<NewUser>, connection: db::Connection) -> Json<User> {
+fn create(user: Json<NewUser>, conn: db::Connection) -> Json<User> {
     let insert = NewUser { ..user.into_inner() };
-    Json(NewUser::create(insert, &connection))
+    Json(NewUser::create(insert, &conn))
 }
 #[get("/users")]
-fn get_users(connection: db::Connection) -> Json<Vec<User>> {
-    Json(User::read(&connection))
+fn get_users(conn: db::Connection) -> Json<Vec<User>> {
+    Json(User::read(&conn))
 }
 
 fn main() {
