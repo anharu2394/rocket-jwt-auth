@@ -3,6 +3,7 @@ use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use schema::users;
 use schema::users::dsl::{users as all_users};
+use encrypt;
 
 #[table_name = "users"]
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
@@ -33,10 +34,17 @@ pub struct NewUser {
  impl NewUser {
     pub fn create(user: NewUser, connection: &PgConnection) -> User {
         diesel::insert_into(users::table)
-            .values(&user)
+            .values(&user.encrypt_pass())
             .execute(connection)
             .expect("Error creating new user");
 
         all_users.order(users::id.desc()).first(connection).unwrap()
+    }
+    fn encrypt_pass(&self) -> NewUser {
+        NewUser { 
+            name: self.name.clone(), 
+            email: self.email.clone(),
+            password: encrypt::encrypt(&self.password),
+        }
     }
  }

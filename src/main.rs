@@ -10,6 +10,7 @@ extern crate r2d2_diesel;
 mod db;
 mod schema;
 mod models;
+mod encrypt;
 
 use rocket_contrib::{Json, Value};
 use models::*;
