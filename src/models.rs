@@ -1,7 +1,8 @@
 use diesel;
 use diesel::prelude::*;
-use diesel::mysql::MysqlConnection;
+use diesel::pg::PgConnection;
 use schema::users;
+use schema::users::dsl::{users as all_users};
 
 #[table_name = "users"]
 #[derive(Serialize, Deserialize, Queryable, Insertable)]
@@ -13,24 +14,29 @@ pub struct User {
 }
 
 impl User {
-    pub fn create(user: User, connection: &MysqlConnection) -> User {
-        diesel::insert_into(useres::table)
+    pub fn read(connection: &PgConnection) -> Vec<User> {
+        all_users.order(users::id.desc()).load::<User>(connection).unwrap()
+    }
+
+    pub fn delete(id: i32, connection: &PgConnection) -> bool {
+        diesel::delete(users::table.find(id)).execute(connection).is_ok()
+    }
+}
+
+#[derive(Insertable, Deserialize, AsChangeset)]
+#[table_name="users"]
+pub struct NewUser {
+    pub name: String,
+    pub email: String,
+    pub password: String,
+}
+ impl NewUser {
+    pub fn create(user: NewUser, connection: &PgConnection) -> User {
+        diesel::insert_into(users::table)
             .values(&user)
             .execute(connection)
             .expect("Error creating new user");
 
-        useres::table.order(users::id.desc()).first(connection).unwrap()
+        all_users.order(users::id.desc()).first(connection).unwrap()
     }
-
-    pub fn read(connection: &MysqlConnection) -> Vec<user> {
-        useres::table.order(users::id.asc()).load::<User>(connection).unwrap()
-    }
-
-    pub fn update(id: i32, user: User, connection: &MysqlConnection) -> bool {
-        diesel::update(useres::table.find(id)).set(&user).execute(connection).is_ok()
-    }
-
-    pub fn delete(id: i32, connection: &MysqlConnection) -> bool {
-        diesel::delete(useres::table.find(id)).execute(connection).is_ok()
-    }
-}i
+ }
