@@ -13,6 +13,7 @@ r2d2-diesel = "1.0.0"
 serde_json = "1.0.28"
 serde = "1.0.79"
 serde_derive = "1.0.79"
+fernet = "0.1.0"
 
 [dependencies.rocket_contrib]
 version = "0.3.16"
