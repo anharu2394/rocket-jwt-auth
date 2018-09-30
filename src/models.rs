@@ -1,8 +1,11 @@
+extern crate bcrypt;
+
 use diesel;
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
 use schema::users;
 use schema::users::dsl::{users as all_users};
+use self::bcrypt::{DEFAULT_COST, hash, verify};
 use encrypt;
 
 #[table_name = "users"]
@@ -44,7 +47,7 @@ pub struct NewUser {
         NewUser { 
             name: self.name.clone(), 
             email: self.email.clone(),
-            password: encrypt::encrypt(&self.password),
+            password: hash(&self.password, DEFAULT_COST).unwrap(),
         }
     }
  }
