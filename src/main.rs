@@ -37,7 +37,7 @@ fn login(login_user: Json<LoginUser>, conn: db::Connection) -> String {
 }
 
 #[get("/users")]
-fn get_users(conn: db::Connection) -> Json<Vec<User>> {
+fn get_users(token: Token, conn: db::Connection) -> Json<Vec<User>> {
     Json(User::read(&conn))
 }
 
