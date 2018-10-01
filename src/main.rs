@@ -11,9 +11,11 @@ mod db;
 mod schema;
 mod models;
 mod encrypt;
+mod token;
 
-use rocket_contrib::{Json, Value};
+use rocket_contrib::{Json};
 use models::*;
+use token::Token;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -26,9 +28,12 @@ fn create(user: Json<NewUser>, conn: db::Connection) -> Json<User> {
     Json(NewUser::create(insert, &conn))
 }
 
-#[get("/login")]
-fn login(conn: db::Connection) {
-
+#[post("/login", data="<login_user>")]
+fn login(login_user: Json<LoginUser>, conn: db::Connection) -> String {
+    match login_user.verify(&conn) {
+        true => login_user.generate_token(),
+        false => "Invalid".to_string(),
+    }
 }
 
 #[get("/users")]
@@ -45,5 +50,5 @@ fn delete(id: i32, conn: db::Connection) -> String {
 }
 
 fn main() {
-    rocket::ignite().mount("/", routes![index, create,get_users]).manage(db::connect()).launch();
+    rocket::ignite().mount("/", routes![index, create,get_users,login,delete]).manage(db::connect()).launch();
 }
