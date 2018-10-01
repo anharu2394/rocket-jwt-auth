@@ -1,11 +1,11 @@
 extern crate fernet;
 
+use std::env;
 use self::fernet::Fernet;
 use self::fernet::DecryptionError;
 
 fn fernet() -> Fernet {
-    let key = fernet::Fernet::generate_key();
-    fernet::Fernet::new(&key).unwrap()
+    fernet::Fernet::new(&env::var("FERNET_SECRET_KEY").unwrap()).unwrap()
 }
 pub fn encrypt(secret_phrase: &String) -> String {
     fernet().encrypt(secret_phrase.as_bytes())  
