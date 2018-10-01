@@ -36,6 +36,14 @@ fn get_users(conn: db::Connection) -> Json<Vec<User>> {
     Json(User::read(&conn))
 }
 
+#[delete("/users/<id>")]
+fn delete(id: i32, conn: db::Connection) -> String {
+    match User::delete(id, &conn) {
+        true => "OK".to_string(),
+        false => "ERR".to_string(),
+    }    
+}
+
 fn main() {
     rocket::ignite().mount("/", routes![index, create,get_users]).manage(db::connect()).launch();
 }
