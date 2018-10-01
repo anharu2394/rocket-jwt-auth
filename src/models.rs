@@ -53,4 +53,28 @@ impl NewUser {
             password: hash(&self.password, DEFAULT_COST).unwrap(),
         }
     }
- }
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct LoginUser {
+    pub email: String,
+    pub password: String,
+}
+
+impl LoginUser {
+    pub fn verify(&self, connection: &PgConnection) -> bool {
+        verify(&self.password,&User::search(&self.email, connection)).unwrap()
+    }
+    pub fn generate_token(&self) -> String {
+        encrypt::encrypt(&serde_json::to_string(&self.encrypt_pass()).unwrap())
+    } 
+    fn encrypt_pass(&self) -> LoginUser {
+        LoginUser { 
+            email: self.email.clone(),
+            password: hash(&self.password, DEFAULT_COST).unwrap(),
+        }
+    }
+}
+
+
+
