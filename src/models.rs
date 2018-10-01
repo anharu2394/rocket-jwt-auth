@@ -8,8 +8,7 @@ use schema::users::dsl::{users as all_users};
 use self::bcrypt::{DEFAULT_COST, hash, verify};
 use encrypt;
 
-#[table_name = "users"]
-#[derive(Serialize, Deserialize, Queryable, Insertable)]
+#[derive(Serialize, Deserialize, Queryable)]
 pub struct User {
     pub id: i32,
     pub name: String,
