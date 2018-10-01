@@ -24,16 +24,20 @@ impl User {
     pub fn delete(id: i32, connection: &PgConnection) -> bool {
         diesel::delete(users::table.find(id)).execute(connection).is_ok()
     }
+    pub fn search(email: &String,connection: &PgConnection) -> String {
+        all_users.filter(users::email.eq(email)).select(users::password).first(connection).unwrap()
+    }
 }
 
-#[derive(Insertable, Deserialize, AsChangeset)]
-#[table_name="users"]
+#[derive(Insertable, Deserialize)]
+#[table_name = "users"]
 pub struct NewUser {
     pub name: String,
     pub email: String,
     pub password: String,
 }
- impl NewUser {
+
+impl NewUser {
     pub fn create(user: NewUser, connection: &PgConnection) -> User {
         diesel::insert_into(users::table)
             .values(&user.encrypt_pass())
